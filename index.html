@@ -54,7 +54,7 @@
             margin-bottom: 3px;
         }
         input {
-            width: 100%;
+            width: 60px;
             padding: 5px;
             font-size: 12px;
             text-align: center;
@@ -93,11 +93,11 @@
                 </div>
                 <div class="input-box">
                     <label for="mean">平均点</label>
-                    <input type="number" id="mean" placeholder="例: 60">
+                    <input type="number" id="mean" placeholder="例: 60.5">
                 </div>
                 <div class="input-box">
                     <label for="deviation">偏差値</label>
-                    <input type="number" id="deviation" placeholder="例: 50">
+                    <input type="number" step="0.01" id="deviation" placeholder="例: 50.3">
                 </div>
             </div>
             <button onclick="calculateStdDev()">計算する</button>
@@ -105,15 +105,13 @@
         </div>
         
         <div class="section">
-            <h3>もし〇〇点だったら？</h3>
-            <input type="number" id="hypoScore" placeholder="例: 80">
+            <h3>もし <input type="number" id="hypoScore" placeholder="80"> 点だったら？</h3>
             <button onclick="calculateHypoDeviation()">計算する</button>
             <p>偏差値: <span id="hypoDeviationResult">-</span></p>
         </div>
         
         <div class="section">
-            <h3>偏差値を〇〇上げるためには</h3>
-            <input type="number" id="increaseDeviation" placeholder="例: 5">
+            <h3>偏差値を <input type="number" step="0.01" id="increaseDeviation" placeholder="5.0"> 上げるには？</h3>
             <button onclick="calculateRequiredScore()">計算する</button>
             <p>必要得点: <span id="requiredScoreResult">-</span></p>
         </div>
