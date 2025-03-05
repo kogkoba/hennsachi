@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>標準偏差と偏差値予測ツール</title>
+    <title>偏差値計算ツール</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -15,24 +15,54 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
+            overflow: hidden;
         }
         .container {
-            width: 90%;
-            max-width: 400px;
+            width: 95%;
+            max-width: 360px;
             background: white;
-            padding: 20px;
+            padding: 10px;
             border-radius: 10px;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
         }
-        input, button {
-            width: calc(100% - 20px);
-            margin: 10px 0;
-            padding: 10px;
-            font-size: 16px;
+        .section {
+            border: 2px solid #007BFF;
+            padding: 8px;
+            margin-top: 8px;
+            border-radius: 5px;
+            background-color: #eef5ff;
+            text-align: center;
+        }
+        .input-group {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        .input-box {
+            width: 30%;
+            border: 2px solid #007BFF;
+            padding: 5px;
+            border-radius: 5px;
+            background-color: white;
+            text-align: center;
+            min-width: 90px;
+        }
+        label {
+            font-size: 12px;
             display: block;
-            margin-left: auto;
-            margin-right: auto;
+            margin-bottom: 3px;
+        }
+        input {
+            width: 100%;
+            padding: 5px;
+            font-size: 12px;
+            text-align: center;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            background: white;
+            outline: none;
+            box-sizing: border-box;
         }
         button {
             background-color: #007BFF;
@@ -40,71 +70,98 @@
             border: none;
             cursor: pointer;
             border-radius: 5px;
+            width: 100%;
+            padding: 8px;
+            font-size: 14px;
+            margin-top: 5px;
         }
         button:hover {
             background-color: #0056b3;
         }
-        .result {
-            font-size: 18px;
-            font-weight: bold;
-            margin-top: 10px;
-        }
     </style>
 </head>
 <body>
-    <div>
-        <div class="container">
-            <h2>標準偏差を計算</h2>
-            <label for="score">得点：</label>
-            <input type="number" id="score" placeholder="例: 90">
-            
-            <label for="mean">平均点：</label>
-            <input type="number" id="mean" placeholder="例: 61.6">
-            
-            <label for="deviation">偏差値：</label>
-            <input type="number" id="deviation" placeholder="例: 70.4">
-            
-            <button onclick="calculateStandardDeviation()">標準偏差を計算</button>
-            <p class="result" id="stdResult"></p>
+    <div class="container">
+        <h2>模試結果を入力してね</h2>
+        
+        <div class="section">
+            <h3>標準偏差を計算</h3>
+            <div class="input-group">
+                <div class="input-box">
+                    <label for="score">得点</label>
+                    <input type="number" id="score" placeholder="例: 90">
+                </div>
+                <div class="input-box">
+                    <label for="mean">平均点</label>
+                    <input type="number" id="mean" placeholder="例: 60">
+                </div>
+                <div class="input-box">
+                    <label for="deviation">偏差値</label>
+                    <input type="number" id="deviation" placeholder="例: 50">
+                </div>
+            </div>
+            <button onclick="calculateStdDev()">計算する</button>
+            <p>標準偏差: <span id="stdDevResult">-</span></p>
         </div>
-
-        <div class="container">
-            <h2>このテストで〇〇点だったら…</h2>
-            <label for="targetScore">仮の得点：</label>
-            <input type="number" id="targetScore" placeholder="例: 80">
-            
-            <button onclick="calculatePredictedDeviationScore()">偏差値を予測</button>
-            <p class="result" id="predictedDevResult"></p>
+        
+        <div class="section">
+            <h3>もし〇〇点だったら？</h3>
+            <input type="number" id="hypoScore" placeholder="例: 80">
+            <button onclick="calculateHypoDeviation()">計算する</button>
+            <p>偏差値: <span id="hypoDeviationResult">-</span></p>
+        </div>
+        
+        <div class="section">
+            <h3>偏差値を〇〇上げるためには</h3>
+            <input type="number" id="increaseDeviation" placeholder="例: 5">
+            <button onclick="calculateRequiredScore()">計算する</button>
+            <p>必要得点: <span id="requiredScoreResult">-</span></p>
         </div>
     </div>
 
     <script>
-        function calculateStandardDeviation() {
+        function calculateStdDev() {
             let score = parseFloat(document.getElementById("score").value);
             let mean = parseFloat(document.getElementById("mean").value);
             let deviation = parseFloat(document.getElementById("deviation").value);
-
+            
             if (isNaN(score) || isNaN(mean) || isNaN(deviation)) {
-                document.getElementById("stdResult").innerText = "正しい数値を入力してください。";
+                document.getElementById("stdDevResult").innerText = "-";
                 return;
             }
-
-            let stdDev = (score - mean) / ((deviation - 50) / 10);
-            document.getElementById("stdResult").innerText = `標準偏差: ${stdDev.toFixed(2)}`;
+            
+            let stdDev = Math.abs((score - mean) / ((deviation - 50) / 10));
+            document.getElementById("stdDevResult").innerText = stdDev.toFixed(2);
         }
-
-        function calculatePredictedDeviationScore() {
+        
+        function calculateHypoDeviation() {
+            let hypoScore = parseFloat(document.getElementById("hypoScore").value);
             let mean = parseFloat(document.getElementById("mean").value);
-            let std = parseFloat(document.getElementById("stdResult").innerText.split(': ')[1]);
-            let targetScore = parseFloat(document.getElementById("targetScore").value);
-
-            if (isNaN(mean) || isNaN(std) || isNaN(targetScore)) {
-                document.getElementById("predictedDevResult").innerText = "正しい数値を入力してください。";
+            let stdDev = parseFloat(document.getElementById("stdDevResult").innerText);
+            
+            if (isNaN(hypoScore) || isNaN(mean) || isNaN(stdDev)) {
+                document.getElementById("hypoDeviationResult").innerText = "-";
                 return;
             }
-
-            let predictedDeviationScore = 50 + ((targetScore - mean) * 10 / std);
-            document.getElementById("predictedDevResult").innerText = `仮に ${targetScore} 点なら偏差値 ${predictedDeviationScore.toFixed(2)}`;
+            
+            let deviation = ((hypoScore - mean) / stdDev) * 10 + 50;
+            document.getElementById("hypoDeviationResult").innerText = deviation.toFixed(2);
+        }
+        
+        function calculateRequiredScore() {
+            let mean = parseFloat(document.getElementById("mean").value);
+            let stdDev = parseFloat(document.getElementById("stdDevResult").innerText);
+            let increaseDeviation = parseFloat(document.getElementById("increaseDeviation").value);
+            let currentDeviation = parseFloat(document.getElementById("deviation").value);
+            
+            if (isNaN(mean) || isNaN(stdDev) || isNaN(increaseDeviation) || isNaN(currentDeviation)) {
+                document.getElementById("requiredScoreResult").innerText = "-";
+                return;
+            }
+            
+            let targetDeviation = currentDeviation + increaseDeviation;
+            let requiredScore = mean + ((targetDeviation - 50) / 10) * stdDev;
+            document.getElementById("requiredScoreResult").innerText = requiredScore.toFixed(2) + " 点";
         }
     </script>
 </body>
