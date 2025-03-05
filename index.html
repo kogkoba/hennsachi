@@ -23,6 +23,7 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
         }
         input, button {
             width: calc(100% - 20px);
@@ -51,26 +52,50 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>標準偏差と偏差値を予測</h2>
-        
-        <label for="mean">平均点：</label>
-        <input type="number" id="mean" placeholder="例: 61.6">
-        
-        <label for="std">標準偏差：</label>
-        <input type="number" id="std" placeholder="例: 18.4">
-        
-        <label for="targetScore">仮に取る得点：</label>
-        <input type="number" id="targetScore" placeholder="例: 80">
-        
-        <button onclick="calculatePredictedDeviationScore()">偏差値を予測</button>
-        <p class="result" id="predictedDevResult"></p>
+    <div>
+        <div class="container">
+            <h2>標準偏差を計算</h2>
+            <label for="score">得点：</label>
+            <input type="number" id="score" placeholder="例: 90">
+            
+            <label for="mean">平均点：</label>
+            <input type="number" id="mean" placeholder="例: 61.6">
+            
+            <label for="deviation">偏差値：</label>
+            <input type="number" id="deviation" placeholder="例: 70.4">
+            
+            <button onclick="calculateStandardDeviation()">標準偏差を計算</button>
+            <p class="result" id="stdResult"></p>
+        </div>
+
+        <div class="container">
+            <h2>仮の得点から偏差値を予測</h2>
+            <label for="targetScore">仮の得点：</label>
+            <input type="number" id="targetScore" placeholder="例: 80">
+            
+            <button onclick="calculatePredictedDeviationScore()">偏差値を予測</button>
+            <p class="result" id="predictedDevResult"></p>
+        </div>
     </div>
 
     <script>
+        function calculateStandardDeviation() {
+            let score = parseFloat(document.getElementById("score").value);
+            let mean = parseFloat(document.getElementById("mean").value);
+            let deviation = parseFloat(document.getElementById("deviation").value);
+
+            if (isNaN(score) || isNaN(mean) || isNaN(deviation)) {
+                document.getElementById("stdResult").innerText = "正しい数値を入力してください。";
+                return;
+            }
+
+            let stdDev = (score - mean) / ((deviation - 50) / 10);
+            document.getElementById("stdResult").innerText = `標準偏差: ${stdDev.toFixed(2)}`;
+        }
+
         function calculatePredictedDeviationScore() {
             let mean = parseFloat(document.getElementById("mean").value);
-            let std = parseFloat(document.getElementById("std").value);
+            let std = parseFloat(document.getElementById("stdResult").innerText.split(': ')[1]);
             let targetScore = parseFloat(document.getElementById("targetScore").value);
 
             if (isNaN(mean) || isNaN(std) || isNaN(targetScore)) {
@@ -79,7 +104,7 @@
             }
 
             let predictedDeviationScore = 50 + ((targetScore - mean) * 10 / std);
-            document.getElementById("predictedDevResult").innerText = `予測される偏差値: ${predictedDeviationScore.toFixed(2)}`;
+            document.getElementById("predictedDevResult").innerText = `仮に ${targetScore} 点なら偏差値 ${predictedDeviationScore.toFixed(2)}`;
         }
     </script>
 </body>
